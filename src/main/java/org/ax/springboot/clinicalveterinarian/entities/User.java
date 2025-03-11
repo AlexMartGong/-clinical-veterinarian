@@ -1,5 +1,7 @@
 package org.ax.springboot.clinicalveterinarian.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.ax.springboot.clinicalveterinarian.enums.Role;
 
@@ -24,6 +26,7 @@ public class User {
     private String phone;
 
     @Column(name = "password", nullable = false, length = 255)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -124,4 +127,5 @@ public class User {
     public void setVaccinations(List<Vaccination> vaccinations) {
         this.vaccinations = vaccinations;
     }
+
 }

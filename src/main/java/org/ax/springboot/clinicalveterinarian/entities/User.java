@@ -1,9 +1,10 @@
 package org.ax.springboot.clinicalveterinarian.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import org.ax.springboot.clinicalveterinarian.enums.Role;
+import org.ax.springboot.clinicalveterinarian.validation.ExistsUsername;
 
 import java.util.List;
 
@@ -16,9 +17,11 @@ public class User {
     @Column(name = "user_id")
     private Integer id;
 
+    @NotBlank
     @Column(name = "full_name", nullable = false, length = 150)
     private String fullName;
 
+    @ExistsUsername
     @Column(name = "username", nullable = false, length = 50, unique = true)
     private String username;
 

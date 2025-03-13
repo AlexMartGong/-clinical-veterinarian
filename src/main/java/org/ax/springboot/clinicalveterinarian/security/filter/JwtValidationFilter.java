@@ -57,9 +57,8 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
             if (authoritiesClaim instanceof String) {
                 // If it's already a JSON string
                 authorities = Arrays.asList(objectMapper.readValue((String) authoritiesClaim, SimpleGrantedAuthority[].class));
-            } else if (authoritiesClaim instanceof List) {
+            } else if (authoritiesClaim instanceof List<?> authList) {
                 // If it's a List (common when using claims.put with a List)
-                List<?> authList = (List<?>) authoritiesClaim;
                 String authJson = objectMapper.writeValueAsString(authList);
                 authorities = Arrays.asList(objectMapper.readValue(authJson, SimpleGrantedAuthority[].class));
             } else {

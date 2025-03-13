@@ -1,7 +1,11 @@
 package org.ax.springboot.clinicalveterinarian.security;
 
+import org.ax.springboot.clinicalveterinarian.security.filter.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -12,6 +16,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SpringSecurityConfig {
 
+    @Autowired
+    private AuthenticationConfiguration authenticationConfiguration;
+
+    @Bean
+    AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -21,7 +33,9 @@ public class SpringSecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests((authz) ->
                         authz.requestMatchers("/api/users/**").permitAll()
-                                .anyRequest().authenticated()).csrf(AbstractHttpConfigurer::disable)
+                                .anyRequest().authenticated())
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(management ->
                         management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
     }

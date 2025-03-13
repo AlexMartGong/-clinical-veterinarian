@@ -1,7 +1,6 @@
 package org.ax.springboot.clinicalveterinarian.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,15 +13,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.ax.springboot.clinicalveterinarian.security.TokenJwtConfig.*;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-
-    private static final SecretKey SECRET_KEY = Jwts.SIG.HS256.key().build();
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager1) {
         this.authenticationManager = authenticationManager1;
@@ -51,6 +50,50 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        super.successfulAuthentication(request, response, chain, authResult);
+        String token = Jwts.builder()
+                .setSubject(authResult.getName())
+                .claim("authorities", authResult.getAuthorities())
+                .signWith(SECRET_KEY)
+                .compact();
+
+        response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
+
+        Map<String, String> body = new HashMap<>();
+        body.put("token", token);
+        body.put("username", authResult.getName());
+        body.put("message", String.format("Successfully authenticated with %s", authResult.getName()));
+
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        response.setContentType(CONTENT_TYPE);
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        /*
+                User user = (User) authResult.getPrincipal();
+        String username = user.getUsername();
+
+        String token = Jwts.builder().subject(username).signWith(SECRET_KEY).compact();
+        response.addHeader("Authorization", "Bearer " + token);
+
+        Map<String, String> body = new HashMap<>();
+        body.put("token", token);
+        body.put("username", username);
+        body.put("message", String.format("Successfully authenticated with %s", username));
+
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_OK);
+         */
+
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "Authentication failed");
+        body.put("error", failed.getMessage());
+
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        response.setContentType(CONTENT_TYPE);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }

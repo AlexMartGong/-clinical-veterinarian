@@ -3,7 +3,6 @@ package org.ax.springboot.clinicalveterinarian.security;
 import io.jsonwebtoken.Jwts;
 
 import javax.crypto.SecretKey;
-import javax.swing.plaf.PanelUI;
 
 public class TokenJwtConfig {
 

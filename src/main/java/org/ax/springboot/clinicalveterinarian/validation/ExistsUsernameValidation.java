@@ -9,10 +9,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExistsUsernameValidation implements ConstraintValidator<ExistsUsername, String> {
 
-    private final UserService userService;
+    private UserService userService;
 
+    // This constructor is for when Spring creates the instance
+    @Autowired
     public ExistsUsernameValidation(UserService userService) {
         this.userService = userService;
+    }
+
+    // This constructor is for when Hibernate Validator creates the instance
+    public ExistsUsernameValidation() {
     }
 
     @Override

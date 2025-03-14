@@ -67,23 +67,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
 
-        /*
-                User user = (User) authResult.getPrincipal();
-        String username = user.getUsername();
-
-        String token = Jwts.builder().subject(username).signWith(SECRET_KEY).compact();
-        response.addHeader("Authorization", "Bearer " + token);
-
-        Map<String, String> body = new HashMap<>();
-        body.put("token", token);
-        body.put("username", username);
-        body.put("message", String.format("Successfully authenticated with %s", username));
-
-        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
-        response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_OK);
-         */
-
     }
 
     @Override

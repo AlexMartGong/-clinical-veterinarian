@@ -33,4 +33,9 @@ public class OwnerServiceImpl implements OwnerService {
     public void deleteById(Integer id) {
         ownerRepository.deleteById(id);
     }
+
+    @Override
+    public long count() {
+        return ownerRepository.count();
+    }
 }

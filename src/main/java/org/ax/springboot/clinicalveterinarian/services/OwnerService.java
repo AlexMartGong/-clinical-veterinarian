@@ -15,4 +15,6 @@ public interface OwnerService {
 
     void deleteById(Integer id);
 
+    long count();
+
 }

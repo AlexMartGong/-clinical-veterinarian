@@ -45,4 +45,10 @@ public class OwnerController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("permitAll()")
+    @GetMapping("/count")
+    public ResponseEntity<?> countOwners() {
+        return ResponseEntity.ok(ownerService.count());
+    }
+
 }

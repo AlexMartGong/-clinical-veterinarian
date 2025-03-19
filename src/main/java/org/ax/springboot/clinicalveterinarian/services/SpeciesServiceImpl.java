@@ -3,6 +3,7 @@ package org.ax.springboot.clinicalveterinarian.services;
 import org.ax.springboot.clinicalveterinarian.entities.Species;
 import org.ax.springboot.clinicalveterinarian.repositories.SpeciesRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Species> findAll() {
         return (List<Species>) speciesRepository.findAll();
     }
